@@ -1,13 +1,6 @@
-#!/usr/bin/env python3
+import os
 import sys
-import autosync_extras
 import socket
-import time
-
-
-def help(var_name):
-	print(autosync_extras.__dict__[var_name.upper()])
-	sys.exit()
 
 def test_connection(host, port, max_tries=3):
 	print("Testing connection to server {}:{}...".format(host, port))
@@ -28,6 +21,7 @@ def test_connection(host, port, max_tries=3):
 				s.shutdown(socket.SHUT_RDWR)
 			s.close()
 	return False
+
 
 
 def validate_server(server):
@@ -60,65 +54,15 @@ def validate_server(server):
 	if len(user) == 0:
 		print("Username '{}' for {} is invalid!".format(user, server))
 		return False
-	
+
 	return True
 
 
-def validate_local_path(path):
-	pass
 
-def validate_remote_path(path):
-	pass
+def validate_path(path, must_exist=False):
+	if must_exist:
+		if not os.path.exists(path):
+			print("Path {} does not exist!".format(path))
+			return False
 
-def add_local_file(lpath, rpath, server):
-	pass
-
-def add_creds(password, server):
-	pass
-
-def autosync():
-	args = [s for s in sys.argv]
-	if len(args) == 1:
-		help("help_root")
-
-	fun = args[1].lower().strip()
-
-	if fun == "about":
-		help("about")
-
-	elif fun == "status":
-		print("This is a status")
-
-	elif fun == "add":
-		if len(args) == 2:
-			help("help_add")
-
-		f_type = args[2].lower().strip()
-
-		if f_type in autosync_extras.ADD_LFILE_ALIAS:
-			if len(args) != 6:
-				help("help_add")
-			lpath, rpath, server = args[3:]
-
-			print("Validating Server...")
-			if not validate_server(server):
-				print("Server failed to validate...")
-				return
-
-			add_local_file(lpath, rpath, server)
-
-		else:
-			help("help_add")
-
-		
-
-	elif fun == "remove":
-		pass
-
-	else:
-		help("help_root")
-
-
-
-if __name__ == '__main__':
-	autosync()
+	return True

@@ -60,6 +60,13 @@ specified by appending a colon and then the port number.
 		autosync add rfile ./file.txt ~/file.txt user@127.0.0.1:2222
 """
 
+HELP_ADD_LFILE = """autosync add localfile localpath remotepath server
+	Adds a localfile to AutoSYNC. Any changes made to this file will be sent to
+	the remote server.
+	Aliases for localfile: [localfile, lfile, file]
+	Example:
+		autosync add lfile ./file.txt ~/file.txt user@127.0.0.1"""
+
 
 ADD_LFILE_ALIAS = ["localfile", "lfile", "file"]
 ADD_RFILE_ALIAS = ["remotefile", "rfile"]
