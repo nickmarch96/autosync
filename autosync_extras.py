@@ -49,7 +49,7 @@ autosync add credentials [password] server
 	but not doing this will result in AutoSYNC asking for credentials
 	upon every sync. Supplying a password in the commandline is also
 	optional. If not then it will be prompted for.
-	Aliases for credentials: [credentials, creds]
+	Aliases for credentials: [credentials, creds, cred]
 	Example:
 		autosync add creds password123 user@127.0.0.1
 		autosync add credentials user@127.0.0.1
@@ -59,3 +59,8 @@ specified by appending a colon and then the port number.
 	Example:
 		autosync add rfile ./file.txt ~/file.txt user@127.0.0.1:2222
 """
+
+
+ADD_LFILE_ALIAS = ["localfile", "lfile", "file"]
+ADD_RFILE_ALIAS = ["remotefile", "rfile"]
+ADD_CRED_ALIAS = ["credentials", "creds", "cred"]

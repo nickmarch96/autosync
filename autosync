@@ -1,29 +1,122 @@
 #!/usr/bin/env python3
 import sys
 import autosync_extras
+import socket
+import time
 
 
 def help(var_name):
 	print(autosync_extras.__dict__[var_name.upper()])
 	sys.exit()
 
+def test_connection(host, port, max_tries=3):
+	print("Testing connection to server {}:{}...".format(host, port))
+	for i in range(max_tries):
+		s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+		s.settimeout(1)
+		connected = False
+		try:
+			s.connect((host, port))
+			connected = True
+			print("Established.")
+			return True
+		except:
+			print("Connection Failed. Trying again...")
+			time.sleep(1)
+		finally:
+			if connected:
+				s.shutdown(socket.SHUT_RDWR)
+			s.close()
+	return False
+
+
+def validate_server(server):
+	if server.count("@") != 1:
+		print("Syntax for remote host {} is invalid!".format(server))
+		return False
+	user, host = server.split("@")
+
+	if ":" in host:
+		if host.count(":") != 1:
+			print("Syntax for remote host {} is invalid!".format(host))
+			return False
+		host, port = host.split(":")
+
+		if not port.isdigit():
+			print("Port '{}' is invalid!".format(port))
+			return False
+		port = int(port)
+
+		if port <= 0 or port > 65535:
+			print("Port '{}' is out of range!".format(port))
+			return False
+	else:
+		port = 22
+
+	if not test_connection(host, port):
+		print("Failed to establish connection to {}:{}.".format(host, port))
+		return False
+
+	if len(user) == 0:
+		print("Username '{}' for {} is invalid!".format(user, server))
+		return False
+	
+	return True
+
+
+def validate_local_path(path):
+	pass
+
+def validate_remote_path(path):
+	pass
+
+def add_local_file(lpath, rpath, server):
+	pass
+
+def add_creds(password, server):
+	pass
 
 def autosync():
-	args = [s.lower() for s in sys.argv]
-	if len(args) == 1 or args[1] == "help":
+	args = [s for s in sys.argv]
+	if len(args) == 1:
 		help("help_root")
 
-	fun = args[1]
+	fun = args[1].lower().strip()
 
 	if fun == "about":
 		help("about")
 
-	if fun == "status":
+	elif fun == "status":
 		print("This is a status")
 
-	if fun == "add":
-		if len(args) == 2 or args[2] == "help":
+	elif fun == "add":
+		if len(args) == 2:
 			help("help_add")
+
+		f_type = args[2].lower().strip()
+
+		if f_type in autosync_extras.ADD_LFILE_ALIAS:
+			if len(args) != 6:
+				help("help_add")
+			lpath, rpath, server = args[3:]
+
+			print("Validating Server...")
+			if not validate_server(server):
+				print("Server failed to validate...")
+				return
+
+			add_local_file(lpath, rpath, server)
+
+		else:
+			help("help_add")
+
+		
+
+	elif fun == "remove":
+		pass
+
+	else:
+		help("help_root")
 
 
 
